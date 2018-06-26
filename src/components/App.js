@@ -3,6 +3,7 @@ import * as d3 from "d3";
 import styled from "styled-components";
 import Header from "./Header";
 import Footer from "./Footer";
+import Viz from "./Viz";
 
 const Container = styled.div`
   font-family: "Lobster", cursive;
@@ -16,6 +17,10 @@ const Content = styled.div`
   flex-shrink: 0;
   flex-basis: auto;
 `;
+
+const outerWidth = 1300;
+const outerHeight = 600;
+const margin = { top: 0, right: 30, bottom: 20, left: 50 };
 
 const rowFunction = d => {
   /*
@@ -39,26 +44,25 @@ const rowFunction = d => {
 class App extends Component {
   componentDidMount() {
     console.log("componentDidMount");
-    const urlDataset = "../data/book_genres.tsv";
+    // const urlDataset = "../data/book_genres.tsv";
     // const urlDataset = "https://github.com/jackdbd/d3-visualizations/blob/master/src/data/book_genres.tsv";
     // const urlDataset = "https://s3.eu-central-1.amazonaws.com/dataviz-challenge-munich-giacomo-debidda/data/book_genres.tsv";
-    const promise = d3.tsv(urlDataset, rowFunction);
-    promise
-      .then(dataset => {
-        console.log(dataset);
-      })
-      .catch(error => {
-        throw error;
-      });
+    // const promise = d3.tsv(urlDataset, rowFunction);
+    // promise
+    //   .then(dataset => {
+    //     console.log(dataset);
+    //   })
+    //   .catch(error => {
+    //     throw error;
+    //   });
   }
   render() {
     return (
       <Container>
         <Header text={"Dataviz Challenge"} />
         <Content>
-          <div style={{ backgroundColor: "#d3d3d3" }}>
-            D3 version {`${d3.version}`}
-          </div>
+          <Viz outerWidth={200} outerHeight={100} margin={margin} />
+          <Viz outerWidth={400} outerHeight={200} />
         </Content>
         <Footer />
       </Container>
