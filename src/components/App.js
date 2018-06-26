@@ -43,7 +43,7 @@ const rowFunction = d => {
 
 class App extends Component {
   componentDidMount() {
-    console.log("componentDidMount");
+    console.log("<App> componentDidMount");
     // const urlDataset = "../data/book_genres.tsv";
     // const urlDataset = "https://github.com/jackdbd/d3-visualizations/blob/master/src/data/book_genres.tsv";
     // const urlDataset = "https://s3.eu-central-1.amazonaws.com/dataviz-challenge-munich-giacomo-debidda/data/book_genres.tsv";

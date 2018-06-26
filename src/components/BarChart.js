@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import * as d3 from "d3";
-import Axis from "./Axis";
+import XAxis from "./XAxis";
+import YAxis from "./YAxis";
 
 /*
   https://stackoverflow.com/questions/48863450/a-thought-about-getderivedstatefromprops
@@ -47,7 +48,8 @@ class BarChart extends Component {
             );
           })}
         </g>
-        <Axis x={20} y={0} data={data} scale={heightScale} />
+        <XAxis x={0} y={height} data={data} scale={widthScale} />
+        <YAxis x={0} y={0} data={data} scale={heightScale} />
       </g>
     );
   }
