@@ -5946,6 +5946,10 @@ rc@^1.0.1, rc@^1.1.6, rc@^1.2.7:
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
 
+react-d3-axis@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/react-d3-axis/-/react-d3-axis-0.1.1.tgz#de890587645e46b1c286314c4f352ebb94f5c522"
+
 react-dev-utils@^5.0.1:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/react-dev-utils/-/react-dev-utils-5.0.1.tgz#1f396e161fe44b595db1b186a40067289bf06613"

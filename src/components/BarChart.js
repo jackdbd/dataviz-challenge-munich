@@ -1,21 +1,20 @@
 import React, { Component } from "react";
 import * as d3 from "d3";
+import { Axis, axisPropsFromTickScale, LEFT } from "react-d3-axis";
+import { scaleLinear, scaleBand } from "d3-scale";
 import XAxis from "./XAxis";
-import YAxis from "./YAxis";
 
 /*
   https://stackoverflow.com/questions/48863450/a-thought-about-getderivedstatefromprops
 */
 class BarChart extends Component {
   state = {
-    widthScale: d3
-      .scaleBand()
+    widthScale: scaleBand()
       .domain(d3.range(0, this.props.data.length))
       .range([0, this.props.width]),
-    heightScale: d3
-      .scaleLinear()
+    heightScale: scaleLinear()
       .domain([0, d3.max(this.props.data)])
-      .range([0, this.props.height])
+      .range([this.props.height, 0])
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -39,17 +38,21 @@ class BarChart extends Component {
             return (
               <rect
                 x={widthScale(i)}
-                y={height - heightScale(d)}
+                y={heightScale(d)}
                 width={widthScale.bandwidth()}
-                height={heightScale(d)}
+                height={this.props.height - heightScale(d)}
                 style={{ fill: "red" }}
                 key={i}
               />
             );
           })}
         </g>
-        <XAxis x={0} y={height} data={data} scale={widthScale} />
-        <YAxis x={0} y={0} data={data} scale={heightScale} />
+        <XAxis x={0} y={height} scale={widthScale} />
+        {/* <Axis {...axisPropsFromBandedScale(widthScale)} /> */}
+        <Axis
+          {...axisPropsFromTickScale(heightScale, data.length)}
+          style={{ orient: LEFT }}
+        />
       </g>
     );
   }

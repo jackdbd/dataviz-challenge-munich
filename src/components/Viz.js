@@ -33,7 +33,7 @@ const Viz = props => {
           y={margin.top}
           width={width}
           height={height}
-          data={[40, 30, 20, 50, 15, 60, 75, 23, 100, 28, 42]}
+          data={[40, 30, 90, 50, 15, 60, 75, 23, 100, 28, 42]}
         />
       </svg>
     </Container>

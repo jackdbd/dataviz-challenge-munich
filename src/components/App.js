@@ -62,7 +62,7 @@ class App extends Component {
         <Header text={"Dataviz Challenge"} />
         <Content>
           <Viz outerWidth={200} outerHeight={100} margin={margin} />
-          <Viz outerWidth={400} outerHeight={200} />
+          <Viz outerWidth={400} outerHeight={200} margin={margin} />
         </Content>
         <Footer />
       </Container>
