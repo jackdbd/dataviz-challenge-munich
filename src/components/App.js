@@ -1,7 +1,12 @@
 import React, { Component } from "react";
 import * as d3 from "d3";
 import styled from "styled-components";
-import { loadDataset, getStaticData } from "../utils";
+import {
+  loadDataset,
+  getStaticData,
+  getDynamicData,
+  getComparisonData
+} from "../utils";
 import Header from "./Header";
 import Footer from "./Footer";
 import Viz from "./Viz";
@@ -32,10 +37,10 @@ class App extends Component {
   };
   async componentDidMount() {
     const dataset = await loadDataset();
-    // console.log("App", dataset, this.state.selectedGenre)
     const staticData = getStaticData(dataset);
-    // console.log("App", staticData)
-    this.setState({ dataset, staticData });
+    const dynamicData = getDynamicData(dataset, this.state.selectedGenre);
+    const comparisonData = getComparisonData(dataset, this.state.selectedGenre);
+    this.setState({ dataset, staticData, dynamicData, comparisonData });
   }
   // <Viz outerWidth={200} outerHeight={100} margin={margin} />
   render() {
