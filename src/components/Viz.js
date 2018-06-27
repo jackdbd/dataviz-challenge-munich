@@ -6,7 +6,7 @@ const Container = styled.div`
   background-color: ${props => `${props.color};`};
 `;
 
-const defaultMargin = { top: 20, right: 10, bottom: 20, left: 10 };
+const defaultMargin = { top: 20, right: 10, bottom: 20, left: 100 };
 
 /*
   Compute width and height with the d3 margin convention.
@@ -22,7 +22,7 @@ const computeWidthHeight = (outerWidth, outerHeight, margin) => {
 };
 
 const Viz = props => {
-  const { outerWidth, outerHeight } = props;
+  const { data, outerWidth, outerHeight } = props;
   const margin = props.margin ? props.margin : defaultMargin;
   const { width, height } = computeWidthHeight(outerWidth, outerHeight, margin);
   return (
@@ -33,7 +33,9 @@ const Viz = props => {
           y={margin.top}
           width={width}
           height={height}
-          data={[40, 30, 90, 50, 15, 60, 75, 23, 100, 28, 42]}
+          data={data}
+          xAccessor={"customers"}
+          yAccessor={"genre"}
         />
       </svg>
     </Container>

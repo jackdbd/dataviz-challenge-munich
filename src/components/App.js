@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import * as d3 from "d3";
 import styled from "styled-components";
+import { loadDataset, getStaticData } from "../utils";
 import Header from "./Header";
 import Footer from "./Footer";
 import Viz from "./Viz";
@@ -18,52 +19,41 @@ const Content = styled.div`
   flex-basis: auto;
 `;
 
-const outerWidth = 1300;
-const outerHeight = 600;
-const margin = { top: 0, right: 30, bottom: 20, left: 50 };
-
-const rowFunction = d => {
-  /*
-    There is no relationship between the number of books of a given genre, and
-    the number of books of other genres (e.g. a single person could buy 1 Satire
-    book and: 10 Science Fiction books + 2 Drama books, etc...).
-  */
-  const genre = d[""];
-  const obj = {
-    genre
-  };
-  const entries = Object.entries(d).filter(e => e[0] !== "");
-  entries.forEach(e => {
-    const otherGenre = e[0];
-    const numBooks = +e[1];
-    obj[otherGenre] = numBooks;
-  });
-  return obj;
-};
+const outerWidth = 500;
+const outerHeight = 300;
+const margin = { top: 20, right: 30, bottom: 20, left: 150 };
 
 class App extends Component {
-  componentDidMount() {
-    console.log("<App> componentDidMount");
-    // const urlDataset = "../data/book_genres.tsv";
-    // const urlDataset = "https://github.com/jackdbd/d3-visualizations/blob/master/src/data/book_genres.tsv";
-    // const urlDataset = "https://s3.eu-central-1.amazonaws.com/dataviz-challenge-munich-giacomo-debidda/data/book_genres.tsv";
-    // const promise = d3.tsv(urlDataset, rowFunction);
-    // promise
-    //   .then(dataset => {
-    //     console.log(dataset);
-    //   })
-    //   .catch(error => {
-    //     throw error;
-    //   });
+  state = {
+    dataset: [],
+    staticData: [],
+    genres: [],
+    selectedGenre: "Satire"
+  };
+  async componentDidMount() {
+    const dataset = await loadDataset();
+    // console.log("App", dataset, this.state.selectedGenre)
+    const staticData = getStaticData(dataset);
+    // console.log("App", staticData)
+    this.setState({ dataset, staticData });
   }
+  // <Viz outerWidth={200} outerHeight={100} margin={margin} />
   render() {
     return (
       <Container>
         <Header text={"Dataviz Challenge"} />
-        <Content>
-          <Viz outerWidth={200} outerHeight={100} margin={margin} />
-          <Viz outerWidth={400} outerHeight={200} margin={margin} />
-        </Content>
+        {this.state.dataset.length < 1 ? (
+          <Content>Loading</Content>
+        ) : (
+          <Content>
+            <Viz
+              data={this.state.staticData}
+              outerWidth={outerWidth}
+              outerHeight={outerHeight}
+              margin={margin}
+            />
+          </Content>
+        )}
         <Footer />
       </Container>
     );

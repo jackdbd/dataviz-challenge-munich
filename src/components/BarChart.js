@@ -1,7 +1,8 @@
 import React, { Component } from "react";
-import * as d3 from "d3";
-import { Axis, axisPropsFromTickScale, LEFT } from "react-d3-axis";
-import { scaleLinear, scaleBand } from "d3-scale";
+import * as d3 from "d3"; // TODO: replace with specific d3 module for d3.max
+import { Axis, axisPropsFromBandedScale, LEFT } from "react-d3-axis";
+import { scaleLinear, scaleBand, scaleOrdinal } from "d3-scale";
+import { schemeCategory10 } from "d3-scale-chromatic";
 import XAxis from "./XAxis";
 
 /*
@@ -9,50 +10,50 @@ import XAxis from "./XAxis";
 */
 class BarChart extends Component {
   state = {
-    widthScale: scaleBand()
-      .domain(d3.range(0, this.props.data.length))
+    xScale: scaleLinear()
+      .domain([0, d3.max(this.props.data.map(d => d[this.props.xAccessor]))])
       .range([0, this.props.width]),
-    heightScale: scaleLinear()
-      .domain([0, d3.max(this.props.data)])
+    yScale: scaleBand()
+      .domain(this.props.data.map(d => d[this.props.yAccessor]))
       .range([this.props.height, 0])
+      .round(true)
+      .paddingInner(0.2),
+    zScale: scaleOrdinal(schemeCategory10)
   };
 
-  static getDerivedStateFromProps(nextProps, prevState) {
-    // console.log("prevState", prevState, "nextProps", nextProps);
-    let { widthScale, heightScale } = prevState;
-    widthScale.domain(d3.range(0, nextProps.data.length));
-    heightScale.domain([0, d3.max(nextProps.data)]);
-    prevState = { ...prevState, widthScale, heightScale };
-    return prevState;
-  }
+  // TODO: do I need this? Do I need to update the range too?
+  // static getDerivedStateFromProps(nextProps, prevState) {
+  //   // console.log("prevState", prevState, "nextProps", nextProps);
+  //   let { widthScale, heightScale } = prevState;
+  //   widthScale.domain(d3.range(0, nextProps.data.length));
+  //   heightScale.domain([0, d3.max(nextProps.data)]);
+  //   prevState = { ...prevState, widthScale, heightScale };
+  //   return prevState;
+  // }
 
   render() {
     // console.log(this.props);
-    const { x, y, width, height, data } = this.props;
+    const { x, y, width, height, data, xAccessor, yAccessor } = this.props;
     const translate = `translate(${x}, ${y})`;
-    const { widthScale, heightScale } = this.state;
+    const { xScale, yScale, zScale } = this.state;
     return (
       <g transform={translate}>
         <g>
           {data.map((d, i) => {
             return (
               <rect
-                x={widthScale(i)}
-                y={heightScale(d)}
-                width={widthScale.bandwidth()}
-                height={this.props.height - heightScale(d)}
-                style={{ fill: "red" }}
+                x={0}
+                y={yScale(d[yAccessor])}
+                width={xScale(d[xAccessor])}
+                height={yScale.bandwidth()}
+                style={{ fill: zScale(d[yAccessor]) }}
                 key={i}
               />
             );
           })}
         </g>
-        <XAxis x={0} y={height} scale={widthScale} />
-        {/* <Axis {...axisPropsFromBandedScale(widthScale)} /> */}
-        <Axis
-          {...axisPropsFromTickScale(heightScale, data.length)}
-          style={{ orient: LEFT }}
-        />
+        <Axis {...axisPropsFromBandedScale(yScale)} style={{ orient: LEFT }} />
+        <XAxis x={0} y={height} scale={xScale} />
       </g>
     );
   }
