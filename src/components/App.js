@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import * as d3 from "d3";
+// import * as d3 from "d3";
 import styled from "styled-components";
 import {
   loadDataset,
@@ -24,8 +24,8 @@ const Content = styled.div`
   flex-basis: auto;
 `;
 
-const outerWidth = 500;
-const outerHeight = 300;
+const outerWidth = 1200;
+const outerHeight = 800;
 const margin = { top: 20, right: 30, bottom: 20, left: 150 };
 
 class App extends Component {
@@ -42,7 +42,7 @@ class App extends Component {
     const comparisonData = getComparisonData(dataset, this.state.selectedGenre);
     this.setState({ dataset, staticData, dynamicData, comparisonData });
   }
-  // <Viz outerWidth={200} outerHeight={100} margin={margin} />
+
   render() {
     return (
       <Container>
@@ -53,6 +53,12 @@ class App extends Component {
           <Content>
             <Viz
               data={this.state.staticData}
+              outerWidth={outerWidth}
+              outerHeight={outerHeight}
+              margin={margin}
+            />
+            <Viz
+              data={this.state.dynamicData}
               outerWidth={outerWidth}
               outerHeight={outerHeight}
               margin={margin}
