@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-// import * as d3 from "d3";
 import styled from "styled-components";
 import {
   loadDataset,
@@ -35,6 +34,7 @@ class App extends Component {
     genres: [],
     selectedGenre: "Satire"
   };
+
   async componentDidMount() {
     const dataset = await loadDataset();
     const staticData = getStaticData(dataset);

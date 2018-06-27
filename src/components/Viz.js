@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import styled from "styled-components";
 // import { withParentSize } from "@vx/responsive";
 // import ResizeAware from "react-resize-aware";
+import ReactTooltip from "react-tooltip";
 import { scaleThreshold, scaleOrdinal } from "@vx/scale";
 import { LegendThreshold, LegendOrdinal } from "@vx/legend";
 import { schemeCategory10 } from "d3-scale-chromatic";
@@ -146,6 +147,14 @@ class Viz extends Component {
             yAccessor={d => d.genre}
           />
         </svg>
+        <ReactTooltip
+          id="global-tooltip"
+          place="top"
+          type="dark"
+          getContent={dataTip => {
+            return <span>{dataTip}</span>;
+          }}
+        />
         <LegendThreshold
           scale={threshold}
           direction="column-reverse"

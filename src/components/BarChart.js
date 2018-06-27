@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { max as d3Max } from "d3-array"; // TODO: replace with specific d3 module for d3.max
 import { AxisLeft, AxisBottom } from "@vx/axis";
+import { Bar } from "@vx/shape";
 import { scaleLinear, scaleBand, scaleOrdinal } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
 import { format as d3Format } from "d3-format";
@@ -32,6 +33,73 @@ class BarChart extends Component {
   //   return prevState;
   // }
 
+  // render() {
+  //   // console.log(this.props);
+  //   const {
+  //     x,
+  //     y,
+  //     width,
+  //     height,
+  //     data,
+  //     xAccessor,
+  //     yAccessor,
+  //     xAxisFormatSpecifier
+  //   } = this.props;
+  //   const translate = `translate(${x}, ${y})`;
+  //   const { xScale, yScale, zScale } = this.state;
+  //   return (
+  //     <g transform={translate}>
+  //       <g>
+  //         {data.map((d, i) => {
+  //           return (
+  //             <rect
+  //               x={0}
+  //               y={yScale(yAccessor(d))}
+  //               width={xScale(xAccessor(d))}
+  //               height={yScale.bandwidth()}
+  //               style={{ fill: zScale(yAccessor(d)) }}
+  //               key={i}
+  //             />
+  //           );
+  //         })}
+  //       </g>
+  //       <AxisLeft
+  //         top={0}
+  //         left={0}
+  //         scale={yScale}
+  //         stroke="#000000"
+  //         tickStroke="#000000"
+  //         tickLabelProps={(d, i) => ({
+  //           textAnchor: "end",
+  //           fontSize: 20,
+  //           fontFamily: "Lobster",
+  //           dx: "-0.25em",
+  //           dy: "0.25em"
+  //         })}
+  //         tickComponent={({ formattedValue, ...tickProps }) => (
+  //           <text {...tickProps}>{formattedValue}</text>
+  //         )}
+  //       />
+  //       <AxisBottom
+  //         top={height}
+  //         left={0}
+  //         scale={xScale}
+  //         label="Customers"
+  //         labelProps={{
+  //           fontSize: 30,
+  //           fontFamily: "Lobster"
+  //         }}
+  //         tickFormat={(d, i) => `${d3Format(xAxisFormatSpecifier)(d)}`}
+  //         tickLabelProps={(d, i) => ({
+  //           fontSize: 20,
+  //           fontFamily: "Lobster",
+  //           dx: "-0.5em"
+  //         })}
+  //       />
+  //     </g>
+  //   );
+  // }
+
   render() {
     // console.log(this.props);
     const {
@@ -46,18 +114,29 @@ class BarChart extends Component {
     } = this.props;
     const translate = `translate(${x}, ${y})`;
     const { xScale, yScale, zScale } = this.state;
+    const thisComponent = this;
     return (
       <g transform={translate}>
         <g>
           {data.map((d, i) => {
             return (
-              <rect
+              <Bar
                 x={0}
                 y={yScale(yAccessor(d))}
                 width={xScale(xAccessor(d))}
                 height={yScale.bandwidth()}
-                style={{ fill: zScale(yAccessor(d)) }}
-                key={i}
+                fill={`url(#bWaves)`}
+                fill={zScale(yAccessor(d))}
+                data={{ x: xAccessor(d), y: yAccessor(d) }}
+                id={`#bar-${i}`}
+                data-tip={`${d.genre}: ${d.customers}`}
+                data-for="global-tooltip"
+                onClick={d => event => {
+                  alert(`clicked: ${JSON.stringify(d)}`);
+                }}
+                onMouseEnter={d => event => {
+                  console.log(event, d, thisComponent);
+                }}
               />
             );
           })}
