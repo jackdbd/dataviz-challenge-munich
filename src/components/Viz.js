@@ -2,6 +2,9 @@ import React, { Component } from "react";
 import styled from "styled-components";
 // import { withParentSize } from "@vx/responsive";
 // import ResizeAware from "react-resize-aware";
+import { scaleThreshold, scaleOrdinal } from "@vx/scale";
+import { LegendThreshold, LegendOrdinal } from "@vx/legend";
+import { schemeCategory10 } from "d3-scale-chromatic";
 import BarChart from "./BarChart";
 
 // width: ${props => `${props.width}px;`};
@@ -108,30 +111,50 @@ const Container = styled.div`
 
 // const ResponsiveViz = withParentSize(Viz);
 
+const threshold = scaleThreshold({
+  domain: [0.02, 0.04, 0.06, 0.08, 0.1],
+  range: ["#f2f0f7", "#dadaeb", "#bcbddc", "#9e9ac8", "#756bb1", "#54278f"]
+});
+
 class Viz extends Component {
   render() {
     const { data, outerWidth, outerHeight } = this.props;
     const margin = this.props.margin || this.state.margin;
     // const { width, height } = this.state;
+    const colorScale = scaleOrdinal({
+      domain: data.map(d => d.genre),
+      range: schemeCategory10
+    });
+
     return (
-      <svg
-        width={outerWidth}
-        height={outerHeight}
-        preserveAspectRatio={"xMidYMid meet"}
-        style={{ backgroundColor: "steelblue" }}
-        viewBox={`0 0 ${outerWidth * 1.5} ${outerHeight * 1.5}`}
-      >
-        <defs />
-        <BarChart
-          x={margin.left}
-          y={margin.top}
+      <div>
+        <svg
           width={outerWidth}
           height={outerHeight}
-          data={data}
-          xAccessor={d => d.customers}
-          yAccessor={d => d.genre}
+          preserveAspectRatio={"xMidYMid meet"}
+          style={{ backgroundColor: "steelblue" }}
+          viewBox={`0 0 ${outerWidth * 1.5} ${outerHeight * 1.5}`}
+        >
+          <defs />
+          <BarChart
+            x={margin.left}
+            y={margin.top}
+            width={outerWidth}
+            height={outerHeight}
+            data={data}
+            xAccessor={d => d.customers}
+            yAccessor={d => d.genre}
+          />
+        </svg>
+        <LegendThreshold
+          scale={threshold}
+          direction="column-reverse"
+          itemDirection="row-reverse"
+          labelMargin="0 20px 0 0"
+          shapeMargin="1px 0 0"
         />
-      </svg>
+        <LegendOrdinal scale={colorScale} direction="column-reverse" />
+      </div>
     );
   }
 }
