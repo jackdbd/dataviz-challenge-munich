@@ -1,0 +1,217 @@
+import React from "react";
+import PropTypes from "prop-types";
+import { max as d3Max } from "d3-array";
+import { scaleLinear, scaleBand, scaleOrdinal } from "d3-scale";
+import { schemeCategory10 } from "d3-scale-chromatic";
+import { format as d3Format } from "d3-format";
+import { withParentSize } from "@vx/responsive";
+import { AxisLeft, AxisBottom } from "@vx/axis";
+import { GradientPinkBlue } from "@vx/gradient";
+import { Text } from "@vx/text";
+import D3MarginConvention from "./D3MarginConvention";
+import Bars from "./Bars";
+
+// TODO: add withDebugSVG, a HOC that wraps a SVG component
+// Maybe it would be more appropriate to call it DebugSVGViewBox
+function DebugSVG(props) {
+  const { width, height, viewBox, margin } = props;
+  const outerWidth = width;
+  const outerHeight = height;
+  const innerWidth = outerWidth - margin.left - margin.right;
+  const innerHeight = outerHeight - margin.top - margin.bottom;
+  const center = {
+    x: margin.left + innerWidth / 2,
+    y: margin.top + innerHeight / 2
+  };
+  const r = 5;
+  return (
+    <React.Fragment>
+      <GradientPinkBlue id="debug-svg-gradient" />
+      <g className={"debug-svg"}>
+        <rect
+          x={0}
+          y={0}
+          width={outerWidth}
+          height={outerHeight}
+          style={{ fill: "url(#debug-svg-gradient)", opacity: 0.7 }}
+        />
+        <Text
+          x={0}
+          y={0}
+          dx={5}
+          dy={5}
+          verticalAnchor="start"
+        >{`${outerWidth} x ${outerHeight}`}</Text>
+      </g>
+      <g className={"debug-svg-margins"}>
+        <rect
+          x={margin.left}
+          y={margin.top}
+          width={innerWidth}
+          height={innerHeight}
+          style={{
+            fill: "none",
+            stroke: "black",
+            strokeWidth: 2,
+            strokeDasharray: "4 1"
+          }}
+        />
+        <Text
+          x={margin.left}
+          y={margin.top}
+          dx={5}
+          dy={5}
+          verticalAnchor="start"
+        >{`${innerWidth} x ${innerHeight}`}</Text>
+      </g>
+      <g className="svg-debug-center">
+        <circle cx={center.x} cy={center.y} r={r} style={{ fill: "red" }} />
+        <Text x={center.x + r} y={center.y} verticalAnchor="middle">{`(${
+          center.x
+        }, ${center.y})`}</Text>
+      </g>
+      <g className={"debug-svg-viewbox"}>
+        <Text
+          x={margin.left + innerWidth}
+          y={margin.top + innerHeight}
+          dx={-5}
+          dy={-5}
+          textAnchor="end"
+          verticalAnchor="end"
+        >{`Viewbox: ${viewBox}`}</Text>
+      </g>
+    </React.Fragment>
+  );
+}
+
+function Chart(props) {
+  const {
+    parentWidth,
+    parentHeight,
+    margin,
+    data,
+    accessors,
+    axisFormatSpecifiers,
+    showDebug
+  } = props;
+  const innerWidth = parentWidth - margin.left - margin.right;
+  const innerHeight = parentHeight - margin.top - margin.bottom;
+  const xScale = scaleLinear()
+    .domain([0, d3Max(data.map(accessors.x))])
+    .range([0, innerWidth]);
+  const yScale = scaleBand()
+    .domain(data.map(accessors.y))
+    .range([innerHeight, 0])
+    .round(true)
+    .paddingInner(0.2);
+  const zScale = scaleOrdinal(schemeCategory10);
+
+  const viewBox = props.viewBox
+    ? props.viewBox
+    : `0 0 ${parentWidth} ${parentHeight}`;
+
+  return (
+    <svg
+      width={parentWidth}
+      height={parentHeight}
+      viewBox={viewBox}
+      preserveAspectRatio="xMinYMin meet"
+    >
+      {showDebug && (
+        <DebugSVG
+          width={parentWidth}
+          height={parentHeight}
+          viewBox={viewBox}
+          margin={margin}
+        />
+      )}
+      <D3MarginConvention top={margin.top} left={margin.left}>
+        <Bars
+          data={data}
+          xScale={xScale}
+          yScale={yScale}
+          zScale={zScale}
+          xAccessor={accessors.x}
+          yAccessor={accessors.y}
+          zAccessor={accessors.z}
+        />
+        <AxisLeft
+          top={0}
+          left={0}
+          scale={yScale}
+          stroke="#000000"
+          tickStroke="#000000"
+          tickLabelProps={(d, i) => ({
+            textAnchor: "end",
+            fontSize: 20,
+            fontFamily: "Lobster",
+            dx: "-0.25em",
+            dy: "0.25em"
+          })}
+          tickComponent={({ formattedValue, ...tickProps }) => (
+            <text {...tickProps}>{formattedValue}</text>
+          )}
+        />
+        <AxisBottom
+          top={innerHeight}
+          left={0}
+          scale={xScale}
+          label="Customers"
+          labelProps={{
+            fontSize: 20,
+            fontFamily: "Lobster"
+          }}
+          tickFormat={d => {
+            return `${d3Format(axisFormatSpecifiers.x)(d)}`;
+          }}
+          tickLabelProps={(d, i) => ({
+            fontSize: 20,
+            fontFamily: "Lobster",
+            dx: "-0.5em"
+          })}
+        />
+      </D3MarginConvention>
+    </svg>
+  );
+}
+
+Chart.defaultProps = {
+  margin: {
+    top: 20,
+    right: 10,
+    bottom: 20,
+    left: 10
+  },
+  axisFormatSpecifiers: {
+    x: ".2s",
+    y: ""
+  },
+  showDebug: false
+};
+
+Chart.propTypes = {
+  parentWidth: PropTypes.number.isRequired,
+  parentHeight: PropTypes.number.isRequired,
+  margin: PropTypes.shape({
+    top: PropTypes.number.isRequired,
+    right: PropTypes.number.isRequired,
+    bottom: PropTypes.number.isRequired,
+    left: PropTypes.number.isRequired
+  }),
+  data: PropTypes.array.isRequired,
+  accessors: PropTypes.objectOf(PropTypes.func).isRequired,
+  axisFormatSpecifiers: PropTypes.shape({
+    x: PropTypes.string,
+    y: PropTypes.string
+  }),
+  viewBox: PropTypes.string,
+  showDebug: PropTypes.bool
+};
+
+/*
+  withParentSize automatically passes parentWidth and parentHeight to the
+  wrapped component
+*/
+const ResponsiveChart = withParentSize(Chart);
+
+export { Chart, ResponsiveChart };

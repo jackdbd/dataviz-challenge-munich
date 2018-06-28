@@ -127,12 +127,6 @@
   dependencies:
     classnames "^2.2.5"
 
-"@vx/mock-data@^0.0.165":
-  version "0.0.165"
-  resolved "https://registry.yarnpkg.com/@vx/mock-data/-/mock-data-0.0.165.tgz#be65485a901f5601f23c97158884372d84030383"
-  dependencies:
-    d3-random "^1.0.3"
-
 "@vx/point@0.0.165":
   version "0.0.165"
   resolved "https://registry.yarnpkg.com/@vx/point/-/point-0.0.165.tgz#7ebde5da3d86954fe31a56f923f31550f0b4b867"
@@ -163,7 +157,7 @@
     d3-shape "^1.2.0"
     prop-types "^15.5.10"
 
-"@vx/text@0.0.165":
+"@vx/text@0.0.165", "@vx/text@^0.0.165":
   version "0.0.165"
   resolved "https://registry.yarnpkg.com/@vx/text/-/text-0.0.165.tgz#e7f22979a1e744216be1a535414752c2ceb2f97a"
   dependencies:
@@ -2159,7 +2153,7 @@ d3-quadtree@1:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/d3-quadtree/-/d3-quadtree-1.0.3.tgz#ac7987e3e23fe805a990f28e1b50d38fcb822438"
 
-d3-random@1, d3-random@^1.0.3:
+d3-random@1:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/d3-random/-/d3-random-1.1.0.tgz#6642e506c6fa3a648595d2b2469788a8d12529d3"
 
@@ -6089,10 +6083,6 @@ react-error-overlay@^4.0.0:
 react-is@^16.3.1:
   version "16.4.1"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.4.1.tgz#d624c4650d2c65dbd52c72622bbf389435d9776e"
-
-react-resize-aware@^2.7.1:
-  version "2.7.1"
-  resolved "https://registry.yarnpkg.com/react-resize-aware/-/react-resize-aware-2.7.1.tgz#e54bc5fc4d67e3f9cc0342626e836bfc207e322e"
 
 react-scripts@1.1.4:
   version "1.1.4"
