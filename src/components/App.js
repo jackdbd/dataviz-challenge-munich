@@ -8,7 +8,7 @@ import {
 } from "../utils";
 import Header from "./Header";
 import Footer from "./Footer";
-import { ResponsiveChart } from "./Chart";
+import { ResponsiveChart, ResponsiveComparisonChart } from "./Chart";
 
 const FlexContainer = styled.div`
   display: flex;
@@ -85,6 +85,11 @@ class App extends Component {
                 data={this.state.dynamicData}
                 accessors={this.state.accessorsDynamicChart}
                 viewBox={"0 0 2000 500"}
+                showDebug
+              />
+              <ResponsiveComparisonChart
+                margin={{ top: 40, right: 100, bottom: 60, left: 300 }}
+                data={this.state.comparisonData}
                 showDebug
               />
             </GridContainer>

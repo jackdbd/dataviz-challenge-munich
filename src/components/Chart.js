@@ -208,10 +208,42 @@ Chart.propTypes = {
   showDebug: PropTypes.bool
 };
 
+function ComparisonChart(props) {
+  const { parentWidth, parentHeight, margin, data, showDebug } = props;
+  const innerWidth = parentWidth - margin.left - margin.right;
+  const innerHeight = parentHeight - margin.top - margin.bottom;
+
+  console.log(props);
+
+  const viewBox = props.viewBox
+    ? props.viewBox
+    : `0 0 ${parentWidth} ${parentHeight}`;
+
+  return (
+    <svg
+      width={parentWidth}
+      height={parentHeight}
+      viewBox={viewBox}
+      preserveAspectRatio="xMinYMin meet"
+    >
+      {showDebug && (
+        <DebugSVG
+          width={parentWidth}
+          height={parentHeight}
+          viewBox={viewBox}
+          margin={margin}
+        />
+      )}
+      <D3MarginConvention top={margin.top} left={margin.left} />
+    </svg>
+  );
+}
+
 /*
   withParentSize automatically passes parentWidth and parentHeight to the
   wrapped component
 */
 const ResponsiveChart = withParentSize(Chart);
+const ResponsiveComparisonChart = withParentSize(ComparisonChart);
 
-export { Chart, ResponsiveChart };
+export { ResponsiveChart, ResponsiveComparisonChart };
