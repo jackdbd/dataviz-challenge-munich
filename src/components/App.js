@@ -105,12 +105,14 @@ class App extends Component {
                 axisFormatSpecifiers={{ x: "~s" }}
                 handleMouseOver={this.handleMouseOver}
               />
+              {/*
               <ResponsiveChart
                 data={this.state.dynamicData}
                 accessors={this.state.accessorsDynamicChart}
                 viewBox={"0 0 2000 500"}
                 showDebug
               />
+              */}
               <ResponsiveComparisonChart
                 margin={{ top: 40, right: 100, bottom: 60, left: 300 }}
                 data={this.state.comparisonData}
