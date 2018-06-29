@@ -56,6 +56,12 @@ class App extends Component {
       x: d => d.customers,
       y: d => d.genre,
       z: d => d.genre
+    },
+    accessorsComparisonChart: {
+      xLeft: d => d.ratioLeft,
+      xRight: d => d.ratioRight,
+      y: d => d.genre,
+      z: d => d.genre
     }
   };
 
@@ -81,16 +87,19 @@ class App extends Component {
                 accessors={this.state.accessorsStaticChart}
                 axisFormatSpecifiers={{ x: "~s" }}
               />
+              {/*
               <ResponsiveChart
                 data={this.state.dynamicData}
                 accessors={this.state.accessorsDynamicChart}
                 viewBox={"0 0 2000 500"}
                 showDebug
               />
+              */}
               <ResponsiveComparisonChart
                 margin={{ top: 40, right: 100, bottom: 60, left: 300 }}
                 data={this.state.comparisonData}
-                showDebug
+                accessors={this.state.accessorsComparisonChart}
+                axisFormatSpecifiers={{ xLeft: ".0%", xRight: ".0%" }}
               />
             </GridContainer>
           </FlexContent>
