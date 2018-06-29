@@ -92,7 +92,8 @@ function Chart(props) {
     data,
     accessors,
     axisFormatSpecifiers,
-    showDebug
+    showDebug,
+    handleMouseOver
   } = props;
   const innerWidth = parentWidth - margin.left - margin.right;
   const innerHeight = parentHeight - margin.top - margin.bottom;
@@ -109,6 +110,16 @@ function Chart(props) {
   const viewBox = props.viewBox
     ? props.viewBox
     : `0 0 ${parentWidth} ${parentHeight}`;
+
+  /*
+      A chart might not have any event handlers. Also, when it has one, we need
+      to convert it to a thunk, because in vx, props that are functions need to
+      be thunks.
+      https://github.com/hshoff/vx/issues/50
+    */
+  const onMouseEnter = handleMouseOver
+    ? d => event => handleMouseOver(event, d)
+    : undefined;
 
   return (
     <svg
@@ -137,9 +148,7 @@ function Chart(props) {
                 data={{ x: accessors.x(d), y: accessors.y(d) }}
                 fill={zScale(accessors.z(d))}
                 id={`#bar-${i}`}
-                onClick={d => event => {
-                  alert(`clicked: ${JSON.stringify(d)}`);
-                }}
+                onMouseEnter={onMouseEnter}
               />
             );
           })}

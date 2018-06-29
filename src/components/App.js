@@ -41,12 +41,16 @@ const GridContainer = styled.div`
 `;
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    this.handleMouseOver = this.handleMouseOver.bind(this);
+  }
   state = {
     dataset: [],
     staticData: [],
     dynamicData: [],
     comparisonData: [],
-    selectedGenre: "Satire",
+    // selectedGenre: "Satire",
     accessorsStaticChart: {
       x: d => d.customers,
       y: d => d.genre,
@@ -65,11 +69,24 @@ class App extends Component {
     }
   };
 
+  handleMouseOver(event, d) {
+    const selectedGenre = d.y;
+    const dataset = this.state.dataset;
+    const dynamicData = getDynamicData(dataset, selectedGenre);
+    const comparisonData = getComparisonData(dataset, selectedGenre);
+    this.setState({
+      selectedGenre,
+      dynamicData,
+      comparisonData
+    });
+  }
+
   async componentDidMount() {
+    const selectedGenre = "Satire";
     const dataset = await loadDataset();
     const staticData = getStaticData(dataset);
-    const dynamicData = getDynamicData(dataset, this.state.selectedGenre);
-    const comparisonData = getComparisonData(dataset, this.state.selectedGenre);
+    const dynamicData = getDynamicData(dataset, selectedGenre);
+    const comparisonData = getComparisonData(dataset, selectedGenre);
     this.setState({ dataset, staticData, dynamicData, comparisonData });
   }
   render() {
@@ -86,15 +103,14 @@ class App extends Component {
                 data={this.state.staticData}
                 accessors={this.state.accessorsStaticChart}
                 axisFormatSpecifiers={{ x: "~s" }}
+                handleMouseOver={this.handleMouseOver}
               />
-              {/*
               <ResponsiveChart
                 data={this.state.dynamicData}
                 accessors={this.state.accessorsDynamicChart}
                 viewBox={"0 0 2000 500"}
                 showDebug
               />
-              */}
               <ResponsiveComparisonChart
                 margin={{ top: 40, right: 100, bottom: 60, left: 300 }}
                 data={this.state.comparisonData}
