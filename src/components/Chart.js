@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { max as d3Max } from "d3-array";
+import { max as d3Max, descending as d3Descending } from "d3-array";
 import { scaleLinear, scaleBand, scaleOrdinal } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
 import { format as d3Format } from "d3-format";
@@ -105,7 +105,12 @@ function Chart(props) {
     .range([innerHeight, 0])
     .round(true)
     .paddingInner(0.2);
-  const zScale = scaleOrdinal(schemeCategory10);
+  // we need to sort the entries alphabetically to be consistent across all charts
+  const entries = data.map(accessors.y);
+  entries.sort((a, b) => d3Descending(a, b));
+  const zScale = scaleOrdinal()
+    .domain(entries)
+    .range(schemeCategory10);
 
   const viewBox = props.viewBox
     ? props.viewBox
@@ -232,6 +237,7 @@ function ComparisonChart(props) {
     parentHeight,
     margin,
     data,
+    selected,
     accessors,
     axisFormatSpecifiers,
     showDebug
@@ -256,7 +262,19 @@ function ComparisonChart(props) {
     .range([innerHeight, 0])
     .round(true)
     .paddingInner(0.2);
-  const zScale = scaleOrdinal(schemeCategory10);
+
+  /*
+    build the scale domain by concatenating the selected entry with all the
+    other entries it is compared against, and by sorting them alphabetically (in
+    place)
+  */
+  const entries = [selected, ...data.map(accessors.y)];
+  entries.sort((a, b) => d3Descending(a, b));
+  const zScale = scaleOrdinal()
+    .domain(entries)
+    .range(schemeCategory10);
+
+  console.log("selected", selected, "color", zScale(selected));
 
   const viewBox = props.viewBox
     ? props.viewBox
@@ -281,7 +299,7 @@ function ComparisonChart(props) {
             width={4}
             height={8}
             transform="translate(0, 0)"
-            style={{ fill: "red" }}
+            style={{ fill: zScale(selected) }}
           />
         </pattern>
       </defs>
@@ -305,10 +323,7 @@ function ComparisonChart(props) {
                 data={{ x: accessors.xLeft(d), y: accessors.y(d) }}
                 fill={"url(#hash4_4)"}
                 fillOpacity={0.75}
-                id={`#bar-${i}`}
-                onClick={d => event => {
-                  alert(`clicked: ${JSON.stringify(d)}`);
-                }}
+                id={`#comparison-bar-left-${i}`}
               />
             );
           })}
@@ -322,11 +337,8 @@ function ComparisonChart(props) {
                 width={xScaleRight(accessors.xRight(d))}
                 height={yScale.bandwidth()}
                 data={{ x: accessors.xRight(d), y: accessors.y(d) }}
-                fill={zScale(accessors.z(d))}
-                id={`#bar-${i}`}
-                onClick={d => event => {
-                  alert(`clicked: ${JSON.stringify(d)}`);
-                }}
+                fill={zScale(selected)}
+                id={`#comparison-bar-right-${i}`}
               />
             );
           })}

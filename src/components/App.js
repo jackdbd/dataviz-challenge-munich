@@ -50,7 +50,7 @@ class App extends Component {
     staticData: [],
     dynamicData: [],
     comparisonData: [],
-    // selectedGenre: "Satire",
+    selectedGenre: "Satire",
     accessorsStaticChart: {
       x: d => d.customers,
       y: d => d.genre,
@@ -82,11 +82,11 @@ class App extends Component {
   }
 
   async componentDidMount() {
-    const selectedGenre = "Satire";
+    const genre = this.state.selectedGenre;
     const dataset = await loadDataset();
     const staticData = getStaticData(dataset);
-    const dynamicData = getDynamicData(dataset, selectedGenre);
-    const comparisonData = getComparisonData(dataset, selectedGenre);
+    const dynamicData = getDynamicData(dataset, genre);
+    const comparisonData = getComparisonData(dataset, genre);
     this.setState({ dataset, staticData, dynamicData, comparisonData });
   }
   render() {
@@ -114,6 +114,7 @@ class App extends Component {
               <ResponsiveComparisonChart
                 margin={{ top: 40, right: 100, bottom: 60, left: 300 }}
                 data={this.state.comparisonData}
+                selected={this.state.selectedGenre}
                 accessors={this.state.accessorsComparisonChart}
                 axisFormatSpecifiers={{ xLeft: ".0%", xRight: ".0%" }}
               />
