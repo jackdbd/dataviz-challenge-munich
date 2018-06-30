@@ -11,7 +11,8 @@ import {
 } from "../utils";
 import Header from "./Header";
 import Footer from "./Footer";
-import { ResponsiveChart, ResponsiveComparisonChart } from "./Chart";
+import { Chart, ComparisonChart } from "./Chart";
+import { FooterStatic, FooterDynamic, FooterComparison } from "./FooterChart";
 
 const FlexContainer = styled.div`
   display: flex;
@@ -40,7 +41,7 @@ const GridContainer = styled.div`
   grid-auto-rows: 1fr;
   grid-gap: 10px;
   /* fit the FlexContent's height */
-  min-height: 100vh;
+  height: 200px;
 `;
 
 class App extends Component {
@@ -132,6 +133,7 @@ class App extends Component {
     const dataset = this.state.dataset;
     const dynamicData = getDynamicData(dataset, selectedGenre);
     const comparisonData = getComparisonData(dataset, selectedGenre);
+    const selectedObj = dataset.filter(d => d.genre === selectedGenre)[0];
     /*
       When we hover on a bar we select a new genre, so the domain of the dynamic
       bar chart and the comparison chart changes. The domain of the static chart
@@ -149,6 +151,7 @@ class App extends Component {
       selectedGenre,
       dynamicData,
       comparisonData,
+      selectedObj,
       xScaleDynamic,
       yScaleDynamic,
       xScaleComparisonLeft,
@@ -165,6 +168,7 @@ class App extends Component {
     const staticData = getStaticData(dataset);
     const dynamicData = getDynamicData(dataset, selectedGenre);
     const comparisonData = getComparisonData(dataset, selectedGenre);
+    const selectedObj = dataset.filter(d => d.genre === selectedGenre)[0];
     // Scales
     // The color scale doesn't change across the charts
     const zScale = scaleOrdinal()
@@ -188,6 +192,7 @@ class App extends Component {
       comparisonData,
       genres,
       selectedGenre,
+      selectedObj,
       zScale,
       xScaleStatic,
       yScaleStatic,
@@ -222,8 +227,11 @@ class App extends Component {
           <FlexContent>Loading</FlexContent>
         ) : (
           <FlexContent>
-            <GridContainer>
-              <ResponsiveChart
+            <div>
+              <Header text={"Overview"} backgroundColor={"#d3d3d3"} />
+              <Chart
+                parentWidth={800}
+                parentHeight={600}
                 margin={{ top: 40, right: 100, bottom: 60, left: 300 }}
                 data={this.state.staticData}
                 scales={staticScales}
@@ -231,16 +239,42 @@ class App extends Component {
                 axisFormatSpecifiers={{ x: "~s" }}
                 handleMouseOver={this.handleMouseOver}
               />
-              {/*
-              <ResponsiveChart
+              <FooterStatic
+                data={this.state.staticData}
+                accessor={this.state.accessors.y}
+                colorScale={this.state.zScale}
+                backgroundColor={"#d3d3d3"}
+              />
+            </div>
+            <div>
+              <Header
+                text={`${this.state.selectedGenre} across all genres`}
+                backgroundColor={this.state.zScale(this.state.selectedGenre)}
+              />
+              <Chart
+                parentWidth={800}
+                parentHeight={600}
+                margin={{ top: 40, right: 100, bottom: 60, left: 300 }}
                 data={this.state.dynamicData}
                 scales={dynamicScales}
                 accessors={this.state.accessors}
-                viewBox={"0 0 2000 500"}
-                showDebug
+                selected={this.state.selectedGenre}
+                // viewBox={"0 0 2000 500"}
+                // showDebug
               />
-              */}
-              <ResponsiveComparisonChart
+              <FooterDynamic
+                obj={this.state.selectedObj}
+                data={this.state.dynamicData}
+                accessor={this.state.accessors.y}
+                colorScale={this.state.zScale}
+                backgroundColor={"#d3d3d3"}
+              />
+            </div>
+            <div>
+              <Header text={"Comparison Chart"} backgroundColor={"#d3d3d3"} />
+              <ComparisonChart
+                parentWidth={1200}
+                parentHeight={600}
                 margin={{ top: 40, right: 100, bottom: 60, left: 300 }}
                 data={this.state.comparisonData}
                 selected={this.state.selectedGenre}
@@ -248,7 +282,12 @@ class App extends Component {
                 accessors={this.state.accessorsComparison}
                 axisFormatSpecifiers={{ xLeft: ".0%", xRight: ".0%" }}
               />
-            </GridContainer>
+              <FooterComparison
+                genre={this.state.selectedGenre}
+                colorScale={this.state.zScale}
+                backgroundColor={"#d3d3d3"}
+              />
+            </div>
           </FlexContent>
         )}
         <Footer />

@@ -5,11 +5,8 @@ import { withParentSize } from "@vx/responsive";
 import { Bar } from "@vx/shape";
 import { AxisLeft, AxisBottom } from "@vx/axis";
 import D3MarginConvention from "./D3MarginConvention";
-import Header from "./Header";
 import ChartFooter from "./ChartFooter";
 import DebugSVG from "./DebugSVG";
-
-// TODO: reuse code between Chart and ComparisonChart. With a HOC maybe?
 
 function Chart(props) {
   const {
@@ -32,12 +29,6 @@ function Chart(props) {
     .paddingInner(0.2);
   const zScale = scales.z;
 
-  // TODO: make it more generic and move up in the component hierarchy
-  const firstThree = data
-    .map(accessors.y)
-    .slice(-3)
-    .reverse();
-
   const viewBox = props.viewBox
     ? props.viewBox
     : `0 0 ${parentWidth} ${parentHeight}`;
@@ -53,86 +44,74 @@ function Chart(props) {
     : undefined;
 
   return (
-    <div>
-      <Header text={"Static Bar Chart"} backgroundColor={"#d3d3d3"} />
-      <svg
-        width={parentWidth}
-        height={parentHeight}
-        viewBox={viewBox}
-        preserveAspectRatio="xMinYMin meet"
-      >
-        {showDebug && (
-          <DebugSVG
-            width={parentWidth}
-            height={parentHeight}
-            viewBox={viewBox}
-            margin={margin}
-          />
-        )}
-        <D3MarginConvention top={margin.top} left={margin.left}>
-          <g className={"bars"}>
-            {data.map((d, i) => {
-              return (
-                <Bar
-                  x={0}
-                  y={yScale(accessors.y(d))}
-                  width={xScale(accessors.x(d))}
-                  height={yScale.bandwidth()}
-                  data={{ x: accessors.x(d), y: accessors.y(d) }}
-                  fill={zScale(accessors.z(d))}
-                  id={`#bar-${i}`}
-                  onMouseEnter={onMouseEnter}
-                />
-              );
-            })}
-          </g>
-          <AxisLeft
-            top={0}
-            left={0}
-            scale={yScale}
-            stroke="#000000"
-            tickStroke="#000000"
-            tickLabelProps={(d, i) => ({
-              textAnchor: "end",
-              fontSize: 20,
-              fontFamily: "Lobster",
-              dx: "-0.25em",
-              dy: "0.25em"
-            })}
-            tickComponent={({ formattedValue, ...tickProps }) => (
-              <text {...tickProps}>{formattedValue}</text>
-            )}
-          />
-          <AxisBottom
-            top={innerHeight}
-            left={0}
-            scale={xScale}
-            label="Customers"
-            labelProps={{
-              fontSize: 20,
-              fontFamily: "Lobster"
-            }}
-            tickFormat={d => {
-              return `${d3Format(axisFormatSpecifiers.x)(d)}`;
-            }}
-            tickLabelProps={(d, i) => ({
-              fontSize: 20,
-              fontFamily: "Lobster",
-              dx: "-0.5em"
-            })}
-          />
-        </D3MarginConvention>
-      </svg>
-      <ChartFooter
-        title={"Figure 1"}
-        summary={"Customers who bought at least 1 book of these genres."}
-        description={`The three most popular genres are: ${firstThree[0]}, ${
-          firstThree[1]
-        } and ${firstThree[2]}.`}
-        note={"hover on the bars to update the visualizations below."}
-        backgroundColor={"#d3d3d3"}
-      />
-    </div>
+    <svg
+      width={parentWidth}
+      height={parentHeight}
+      viewBox={viewBox}
+      preserveAspectRatio="xMinYMin meet"
+    >
+      {showDebug && (
+        <DebugSVG
+          width={parentWidth}
+          height={parentHeight}
+          viewBox={viewBox}
+          margin={margin}
+        />
+      )}
+      <D3MarginConvention top={margin.top} left={margin.left}>
+        <g className={"bars"}>
+          {data.map((d, i) => {
+            return (
+              <Bar
+                x={0}
+                y={yScale(accessors.y(d))}
+                width={xScale(accessors.x(d))}
+                height={yScale.bandwidth()}
+                data={{ x: accessors.x(d), y: accessors.y(d) }}
+                fill={zScale(accessors.z(d))}
+                id={`#bar-${i}`}
+                onMouseEnter={onMouseEnter}
+              />
+            );
+          })}
+        </g>
+        <AxisLeft
+          top={0}
+          left={0}
+          scale={yScale}
+          stroke="#000000"
+          tickStroke="#000000"
+          tickLabelProps={(d, i) => ({
+            textAnchor: "end",
+            fontSize: 20,
+            fontFamily: "Lobster",
+            dx: "-0.25em",
+            dy: "0.25em"
+          })}
+          tickComponent={({ formattedValue, ...tickProps }) => (
+            <text {...tickProps}>{formattedValue}</text>
+          )}
+        />
+        <AxisBottom
+          top={innerHeight}
+          left={0}
+          scale={xScale}
+          label="Customers"
+          labelProps={{
+            fontSize: 20,
+            fontFamily: "Lobster"
+          }}
+          tickFormat={d => {
+            return `${d3Format(axisFormatSpecifiers.x)(d)}`;
+          }}
+          tickLabelProps={(d, i) => ({
+            fontSize: 20,
+            fontFamily: "Lobster",
+            dx: "-0.5em"
+          })}
+        />
+      </D3MarginConvention>
+    </svg>
   );
 }
 
@@ -197,130 +176,114 @@ function ComparisonChart(props) {
     : `0 0 ${parentWidth} ${parentHeight}`;
 
   return (
-    <div>
-      <Header
-        text={`${selected} across all genres`}
-        color={"black"}
-        backgroundColor={zScale(selected)}
-      />
-      <svg
-        width={parentWidth}
-        height={parentHeight}
-        viewBox={viewBox}
-        preserveAspectRatio="xMinYMin meet"
-      >
-        <defs>
-          <pattern
-            id="hash4_4"
-            patternUnits="userSpaceOnUse"
-            width={8}
+    <svg
+      width={parentWidth}
+      height={parentHeight}
+      viewBox={viewBox}
+      preserveAspectRatio="xMinYMin meet"
+    >
+      <defs>
+        <pattern
+          id="hash4_4"
+          patternUnits="userSpaceOnUse"
+          width={8}
+          height={8}
+          patternTransform="rotate(60)"
+        >
+          <rect
+            width={4}
             height={8}
-            patternTransform="rotate(60)"
-          >
-            <rect
-              width={4}
-              height={8}
-              transform="translate(0, 0)"
-              style={{ fill: zScale(selected) }}
-            />
-          </pattern>
-        </defs>
-        {showDebug && (
-          <DebugSVG
-            width={parentWidth}
-            height={parentHeight}
-            viewBox={viewBox}
-            margin={margin}
+            transform="translate(0, 0)"
+            style={{ fill: zScale(selected) }}
           />
-        )}
-        <D3MarginConvention top={margin.top} left={margin.left}>
-          <g className={"comparison-bars-left"}>
-            {data.map((d, i) => {
-              return (
-                <Bar
-                  x={xScaleLeft(accessors.xLeft(d))}
-                  y={yScale(accessors.y(d))}
-                  width={innerWidth / 2 - xScaleLeft(accessors.xLeft(d))}
-                  height={yScale.bandwidth()}
-                  data={{ x: accessors.xLeft(d), y: accessors.y(d) }}
-                  fill={"url(#hash4_4)"}
-                  fillOpacity={0.75}
-                  id={`#comparison-bar-left-${i}`}
-                />
-              );
-            })}
-          </g>
-          <g className={"comparison-bars-right"}>
-            {data.map((d, i) => {
-              return (
-                <Bar
-                  x={innerWidth / 2}
-                  y={yScale(accessors.y(d))}
-                  width={xScaleRight(accessors.xRight(d))}
-                  height={yScale.bandwidth()}
-                  data={{ x: accessors.xRight(d), y: accessors.y(d) }}
-                  fill={zScale(selected)}
-                  id={`#comparison-bar-right-${i}`}
-                />
-              );
-            })}
-          </g>
-          <AxisLeft
-            top={0}
-            left={0}
-            scale={yScale}
-            stroke="#000000"
-            tickStroke="#000000"
-            tickLabelProps={(d, i) => ({
-              textAnchor: "end",
-              fontSize: 20,
-              fontFamily: "Lobster",
-              dx: "-0.25em",
-              dy: "0.25em"
-            })}
-            tickComponent={({ formattedValue, ...tickProps }) => (
-              <text {...tickProps}>{formattedValue}</text>
-            )}
-          />
-          <AxisBottom
-            top={innerHeight}
-            left={0}
-            scale={xScaleLeft}
-            tickFormat={d => {
-              return `${d3Format(axisFormatSpecifiers.xLeft)(d)}`;
-            }}
-            tickLabelProps={(d, i) => ({
-              fontSize: 20,
-              fontFamily: "Lobster",
-              dx: "-0.5em"
-            })}
-          />
-          <AxisBottom
-            top={innerHeight}
-            left={innerWidth / 2}
-            scale={xScaleRight}
-            hideZero
-            tickFormat={d => {
-              return `${d3Format(axisFormatSpecifiers.xRight)(d)}`;
-            }}
-            tickLabelProps={(d, i) => ({
-              fontSize: 20,
-              fontFamily: "Lobster",
-              dx: "-0.5em"
-            })}
-          />
-        </D3MarginConvention>
-      </svg>
-      <ChartFooter
-        title={"Figure 3"}
-        summary={`Comparative analysis of ${selected} across all genres.`}
-        description={`On the left, percentage of customers that, given that 
-        they bough (at least) 1 ${selected} book, bought (at least) 1 book of 
-        the genre indicated on the Y axis. On the right, percentage of 
-        customers that, given that they bough (at least) 1 book of the genre 
-        indicated on the Y axis, bought (at least) 1 ${selected} book.`}
-      />
-    </div>
+        </pattern>
+      </defs>
+      {showDebug && (
+        <DebugSVG
+          width={parentWidth}
+          height={parentHeight}
+          viewBox={viewBox}
+          margin={margin}
+        />
+      )}
+      <D3MarginConvention top={margin.top} left={margin.left}>
+        <g className={"comparison-bars-left"}>
+          {data.map((d, i) => {
+            return (
+              <Bar
+                x={xScaleLeft(accessors.xLeft(d))}
+                y={yScale(accessors.y(d))}
+                width={innerWidth / 2 - xScaleLeft(accessors.xLeft(d))}
+                height={yScale.bandwidth()}
+                data={{ x: accessors.xLeft(d), y: accessors.y(d) }}
+                fill={"url(#hash4_4)"}
+                fillOpacity={0.75}
+                id={`#comparison-bar-left-${i}`}
+              />
+            );
+          })}
+        </g>
+        <g className={"comparison-bars-right"}>
+          {data.map((d, i) => {
+            return (
+              <Bar
+                x={innerWidth / 2}
+                y={yScale(accessors.y(d))}
+                width={xScaleRight(accessors.xRight(d))}
+                height={yScale.bandwidth()}
+                data={{ x: accessors.xRight(d), y: accessors.y(d) }}
+                fill={zScale(selected)}
+                id={`#comparison-bar-right-${i}`}
+              />
+            );
+          })}
+        </g>
+        <AxisLeft
+          top={0}
+          left={0}
+          scale={yScale}
+          stroke="#000000"
+          tickStroke="#000000"
+          tickLabelProps={(d, i) => ({
+            textAnchor: "end",
+            fontSize: 20,
+            fontFamily: "Lobster",
+            dx: "-0.25em",
+            dy: "0.25em"
+          })}
+          tickComponent={({ formattedValue, ...tickProps }) => (
+            <text {...tickProps}>{formattedValue}</text>
+          )}
+        />
+        <AxisBottom
+          top={innerHeight}
+          left={0}
+          scale={xScaleLeft}
+          tickFormat={d => {
+            return `${d3Format(axisFormatSpecifiers.xLeft)(d)}`;
+          }}
+          tickLabelProps={(d, i) => ({
+            fontSize: 20,
+            fontFamily: "Lobster",
+            dx: "-0.5em"
+          })}
+        />
+        <AxisBottom
+          top={innerHeight}
+          left={innerWidth / 2}
+          scale={xScaleRight}
+          hideZero
+          tickFormat={d => {
+            return `${d3Format(axisFormatSpecifiers.xRight)(d)}`;
+          }}
+          tickLabelProps={(d, i) => ({
+            fontSize: 20,
+            fontFamily: "Lobster",
+            dx: "-0.5em"
+          })}
+        />
+      </D3MarginConvention>
+    </svg>
   );
 }
 
@@ -331,4 +294,4 @@ function ComparisonChart(props) {
 const ResponsiveChart = withParentSize(Chart);
 const ResponsiveComparisonChart = withParentSize(ComparisonChart);
 
-export { ResponsiveChart, ResponsiveComparisonChart };
+export { Chart, ComparisonChart, ResponsiveChart, ResponsiveComparisonChart };

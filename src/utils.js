@@ -1,4 +1,5 @@
-import * as d3 from "d3";
+import { ascending, descending } from "d3-array";
+import { tsv } from "d3-fetch";
 
 /*
   There is no relationship between the number of books of a given genre, and
@@ -25,7 +26,7 @@ export async function loadDataset() {
   // const urlDataset = "https://s3.eu-central-1.amazonaws.com/dataviz-challenge-munich-giacomo-debidda/data/book_genres.tsv";
   let dataset;
   try {
-    dataset = await d3.tsv(urlDataset, rowFunction);
+    dataset = await tsv(urlDataset, rowFunction);
   } catch (error) {
     throw error;
   }
@@ -38,7 +39,7 @@ export function getStaticData(dataset) {
     return obj;
   });
   // sort in ascending order (in place)
-  data.sort((a, b) => d3.ascending(a.customers, b.customers));
+  data.sort((a, b) => ascending(a.customers, b.customers));
   return data;
 }
 
@@ -48,7 +49,7 @@ export function getDynamicData(dataset, genre) {
     d => d[0] !== "genre" && d[0] !== genre
   );
   const data = entries.map(d => ({ genre: d[0], customers: d[1] }));
-  data.sort((a, b) => d3.ascending(a.customers, b.customers));
+  data.sort((a, b) => ascending(a.customers, b.customers));
   // const genres = data.map(d => d.genre);
   // const genre1 = genres[genres.length - 1];
   // const genre2 = genres[genres.length - 2];
@@ -84,6 +85,6 @@ export function getComparisonData(dataset, genre) {
   });
 
   // sort alphabetically (in place)
-  genres.sort((a, b) => d3.descending(a, b));
+  genres.sort((a, b) => descending(a, b));
   return data;
 }

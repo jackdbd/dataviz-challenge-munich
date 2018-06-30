@@ -55,6 +55,24 @@ const Footer = props => {
               React
             </a>
           </li>
+          <li>
+            <a
+              href="https://d3js.org/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              D3
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://vx-demo.now.sh/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              vx
+            </a>
+          </li>
         </ul>
       </div>
     </footer>
