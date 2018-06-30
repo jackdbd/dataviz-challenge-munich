@@ -1,4 +1,7 @@
 import React, { Component } from "react";
+import { max, descending } from "d3-array";
+import { scaleLinear, scaleBand, scaleOrdinal } from "d3-scale";
+import { schemeCategory10 } from "d3-scale-chromatic";
 import styled from "styled-components";
 import {
   loadDataset,
@@ -46,22 +49,36 @@ class App extends Component {
     this.handleMouseOver = this.handleMouseOver.bind(this);
   }
   state = {
+    /*
+      We load the original dataset and compute the data for the "static" bar
+      chart only once, when <App> is mounted.
+    */
     dataset: [],
     staticData: [],
+    /*
+      genres have to be sorted in the same way and have the same entries across
+      all charts, otherwise the colorscale will differ across the charts.
+    */
+    genres: [],
+    // We need to recompute the charts every time selectedGenre changes
+    selectedGenre: "Satire",
+    /*
+      We need to recompute the data for the "dynamic" bar chart and the
+      comparison chart every time the selected genre changes. These pieces of
+      state are here because otherwise these charts would be data-specific.
+    */
     dynamicData: [],
     comparisonData: [],
-    selectedGenre: "Satire",
-    accessorsStaticChart: {
+    /*
+      We create accessor functions here so the chart components down in the
+      hierarchy can be "dumb" and generic.
+    */
+    accessors: {
       x: d => d.customers,
       y: d => d.genre,
       z: d => d.genre
     },
-    accessorsDynamicChart: {
-      x: d => d.customers,
-      y: d => d.genre,
-      z: d => d.genre
-    },
-    accessorsComparisonChart: {
+    accessorsComparison: {
       xLeft: d => d.ratioLeft,
       xRight: d => d.ratioRight,
       y: d => d.genre,
@@ -69,27 +86,135 @@ class App extends Component {
     }
   };
 
+  /*
+    The scales for the x/y axes depend on the data and the chart dimensions.
+    We can avoid re-defining the scale domain in the chart's render, because it
+    doesn't change if the data stay the same. We can update the scale domain
+    here, and let the chart's render take care of re-defining just the scale's
+    range.
+    Note: even if the "static" bar chart and the "dynamic" bar chart use the
+    same accessor functions, their scale are different because the data is
+    different.
+  */
+  updateStaticScalesDomains(data) {
+    const xScaleStatic = scaleLinear().domain([
+      0,
+      max(data.map(this.state.accessors.x))
+    ]);
+    const yScaleStatic = scaleBand().domain(data.map(this.state.accessors.y));
+    return { xScaleStatic, yScaleStatic };
+  }
+
+  updateDynamicScalesDomains(data) {
+    const xScaleDynamic = scaleLinear().domain([
+      0,
+      max(data.map(this.state.accessors.x))
+    ]);
+    const yScaleDynamic = scaleBand().domain(data.map(this.state.accessors.y));
+    return { xScaleDynamic, yScaleDynamic };
+  }
+
+  updateComparisonScalesDomains(data) {
+    const maxPercentage = max([
+      max(data.map(this.state.accessorsComparison.xLeft)),
+      max(data.map(this.state.accessorsComparison.xRight))
+    ]);
+    const xScaleComparisonLeft = scaleLinear().domain([0, maxPercentage]);
+    const xScaleComparisonRight = scaleLinear().domain([maxPercentage, 0]);
+    const yScaleComparison = scaleBand().domain(
+      data.map(this.state.accessorsComparison.y)
+    );
+    return { xScaleComparisonLeft, xScaleComparisonRight, yScaleComparison };
+  }
+
   handleMouseOver(event, d) {
     const selectedGenre = d.y;
     const dataset = this.state.dataset;
     const dynamicData = getDynamicData(dataset, selectedGenre);
     const comparisonData = getComparisonData(dataset, selectedGenre);
+    /*
+      When we hover on a bar we select a new genre, so the domain of the dynamic
+      bar chart and the comparison chart changes. The domain of the static chart
+      doesn't change, so we don't need to update the domain of its scales.
+    */
+    const { xScaleDynamic, yScaleDynamic } = this.updateDynamicScalesDomains(
+      dynamicData
+    );
+    const {
+      xScaleComparisonLeft,
+      xScaleComparisonRight,
+      yScaleComparison
+    } = this.updateComparisonScalesDomains(comparisonData);
     this.setState({
       selectedGenre,
       dynamicData,
-      comparisonData
+      comparisonData,
+      xScaleDynamic,
+      yScaleDynamic,
+      xScaleComparisonLeft,
+      xScaleComparisonRight,
+      yScaleComparison
     });
   }
 
   async componentDidMount() {
-    const genre = this.state.selectedGenre;
+    // Data
     const dataset = await loadDataset();
+    const selectedGenre = this.state.selectedGenre;
+    const genres = dataset.map(d => d.genre).sort((a, b) => descending(a, b));
     const staticData = getStaticData(dataset);
-    const dynamicData = getDynamicData(dataset, genre);
-    const comparisonData = getComparisonData(dataset, genre);
-    this.setState({ dataset, staticData, dynamicData, comparisonData });
+    const dynamicData = getDynamicData(dataset, selectedGenre);
+    const comparisonData = getComparisonData(dataset, selectedGenre);
+    // Scales
+    // The color scale doesn't change across the charts
+    const zScale = scaleOrdinal()
+      .domain(genres)
+      .range(schemeCategory10);
+    const { xScaleStatic, yScaleStatic } = this.updateStaticScalesDomains(
+      staticData
+    );
+    const { xScaleDynamic, yScaleDynamic } = this.updateDynamicScalesDomains(
+      dynamicData
+    );
+    const {
+      xScaleComparisonLeft,
+      xScaleComparisonRight,
+      yScaleComparison
+    } = this.updateComparisonScalesDomains(comparisonData);
+    this.setState({
+      dataset,
+      staticData,
+      dynamicData,
+      comparisonData,
+      genres,
+      selectedGenre,
+      zScale,
+      xScaleStatic,
+      yScaleStatic,
+      xScaleDynamic,
+      yScaleDynamic,
+      xScaleComparisonLeft,
+      xScaleComparisonRight,
+      yScaleComparison
+    });
   }
   render() {
+    const staticScales = {
+      x: this.state.xScaleStatic,
+      y: this.state.yScaleStatic,
+      z: this.state.zScale
+    };
+    const dynamicScales = {
+      x: this.state.xScaleDynamic,
+      y: this.state.yScaleDynamic,
+      z: this.state.zScale
+    };
+    const comparisonScales = {
+      xLeft: this.state.xScaleComparisonLeft,
+      xRight: this.state.xScaleComparisonRight,
+      y: this.state.yScaleComparison,
+      z: this.state.zScale
+    };
     return (
       <FlexContainer>
         <Header text={"Dataviz Challenge"} />
@@ -101,14 +226,16 @@ class App extends Component {
               <ResponsiveChart
                 margin={{ top: 40, right: 100, bottom: 60, left: 300 }}
                 data={this.state.staticData}
-                accessors={this.state.accessorsStaticChart}
+                scales={staticScales}
+                accessors={this.state.accessors}
                 axisFormatSpecifiers={{ x: "~s" }}
                 handleMouseOver={this.handleMouseOver}
               />
               {/*
               <ResponsiveChart
                 data={this.state.dynamicData}
-                accessors={this.state.accessorsDynamicChart}
+                scales={dynamicScales}
+                accessors={this.state.accessors}
                 viewBox={"0 0 2000 500"}
                 showDebug
               />
@@ -117,7 +244,8 @@ class App extends Component {
                 margin={{ top: 40, right: 100, bottom: 60, left: 300 }}
                 data={this.state.comparisonData}
                 selected={this.state.selectedGenre}
-                accessors={this.state.accessorsComparisonChart}
+                scales={comparisonScales}
+                accessors={this.state.accessorsComparison}
                 axisFormatSpecifiers={{ xLeft: ".0%", xRight: ".0%" }}
               />
             </GridContainer>
@@ -130,8 +258,3 @@ class App extends Component {
 }
 
 export default App;
-
-/* 
-<ResponsiveChart data={this.state.staticData} viewBox={"0 0 1000 2000"} />
-<ResponsiveChart data={[]} viewBox={"0 0 200 200"} />
-*/

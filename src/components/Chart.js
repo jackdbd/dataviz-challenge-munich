@@ -1,8 +1,5 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { max as d3Max, descending as d3Descending } from "d3-array";
-import { scaleLinear, scaleBand, scaleOrdinal } from "d3-scale";
-import { schemeCategory10 } from "d3-scale-chromatic";
 import { format as d3Format } from "d3-format";
 import { withParentSize } from "@vx/responsive";
 import { Bar } from "@vx/shape";
@@ -92,6 +89,7 @@ function Chart(props) {
     parentHeight,
     margin,
     data,
+    scales,
     accessors,
     axisFormatSpecifiers,
     showDebug,
@@ -99,22 +97,14 @@ function Chart(props) {
   } = props;
   const innerWidth = parentWidth - margin.left - margin.right;
   const innerHeight = parentHeight - margin.top - margin.bottom;
-  const xScale = scaleLinear()
-    .domain([0, d3Max(data.map(accessors.x))])
-    .range([0, innerWidth]);
-  const yScale = scaleBand()
-    .domain(data.map(accessors.y))
+  const xScale = scales.x.range([0, innerWidth]);
+  const yScale = scales.y
     .range([innerHeight, 0])
     .round(true)
     .paddingInner(0.2);
+  const zScale = scales.z;
 
-  // we need to sort the entries alphabetically to be consistent across all charts
-  const entries = data.map(accessors.y);
-  entries.sort((a, b) => d3Descending(a, b));
-  const zScale = scaleOrdinal()
-    .domain(entries)
-    .range(schemeCategory10);
-
+  // TODO: make it more generic and move up in the component hierarchy
   const firstThree = data
     .map(accessors.y)
     .slice(-3)
@@ -125,11 +115,11 @@ function Chart(props) {
     : `0 0 ${parentWidth} ${parentHeight}`;
 
   /*
-      A chart might not have any event handlers. Also, when it has one, we need
-      to convert it to a thunk, because in vx, props that are functions need to
-      be thunks.
-      https://github.com/hshoff/vx/issues/50
-    */
+    A chart might not have any event handlers. Also, when it has one, we need to
+    convert it to a thunk. This is because in vx props that are functions need
+    to be thunks.
+    https://github.com/hshoff/vx/issues/50
+  */
   const onMouseEnter = handleMouseOver
     ? d => event => handleMouseOver(event, d)
     : undefined;
@@ -258,6 +248,7 @@ function ComparisonChart(props) {
     margin,
     data,
     selected,
+    scales,
     accessors,
     axisFormatSpecifiers,
     showDebug
@@ -265,36 +256,13 @@ function ComparisonChart(props) {
   const innerWidth = parentWidth - margin.left - margin.right;
   const innerHeight = parentHeight - margin.top - margin.bottom;
 
-  // console.log('ComparisonChart.props', props);
-
-  const maxPercentage = d3Max([
-    d3Max(data.map(accessors.xLeft)),
-    d3Max(data.map(accessors.xRight))
-  ]);
-  const xScaleLeft = scaleLinear()
-    .domain([0, maxPercentage])
-    .range([innerWidth / 2, 0]);
-  const xScaleRight = scaleLinear()
-    .domain([maxPercentage, 0])
-    .range([innerWidth / 2, 0]);
-  const yScale = scaleBand()
-    .domain(data.map(accessors.y))
+  const xScaleLeft = scales.xLeft.range([innerWidth / 2, 0]);
+  const xScaleRight = scales.xRight.range([innerWidth / 2, 0]);
+  const yScale = scales.y
     .range([innerHeight, 0])
     .round(true)
     .paddingInner(0.2);
-
-  /*
-    build the scale domain by concatenating the selected entry with all the
-    other entries it is compared against, and by sorting them alphabetically (in
-    place)
-  */
-  const entries = [selected, ...data.map(accessors.y)];
-  entries.sort((a, b) => d3Descending(a, b));
-  const zScale = scaleOrdinal()
-    .domain(entries)
-    .range(schemeCategory10);
-
-  // console.log("selected", selected, "color", zScale(selected));
+  const zScale = scales.z;
 
   const viewBox = props.viewBox
     ? props.viewBox
