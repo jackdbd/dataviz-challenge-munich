@@ -4,11 +4,11 @@ const FooterComparison = props => {
   const { genre, colorScale, backgroundColor } = props;
   const color = `${colorScale(genre)}`;
   const longText1 =
-    "On the left, percentage of customers that, given that they bough (at least) 1 ";
+    "On the left, percentage of customers that, given that they bough (at least) one ";
   const longText2 =
-    " book, bought (at least) 1 book of the genre indicated on the Y axis.";
+    " book, bought (at least) one book of the genre indicated on the Y axis.";
   const longText3 =
-    "On the right, percentage of customers that, given that they bough (at least) 1 book of the genre indicated on the Y axis, bought (at least) 1 ";
+    "On the right, percentage of customers that, given that they bough (at least) one book of the genre indicated on the Y axis, bought (at least) one ";
   return (
     <footer style={{ backgroundColor: backgroundColor }}>
       <React.Fragment>

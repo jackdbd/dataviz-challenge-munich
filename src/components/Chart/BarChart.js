@@ -80,8 +80,6 @@ function BarChart(props) {
           tickStroke="#000000"
           tickLabelProps={(d, i) => ({
             textAnchor: "end",
-            fontSize: 20,
-            fontFamily: "Kalam",
             dx: "-0.25em",
             dy: "0.25em"
           })}
@@ -95,16 +93,15 @@ function BarChart(props) {
           scale={xScale}
           label="Customers"
           labelProps={{
-            fontSize: 20,
-            fontFamily: "Lobster"
+            fontSize: "1.25em",
+            dy: "2.0em"
           }}
           tickFormat={d => {
             return `${d3Format(axisFormatSpecifiers.x)(d)}`;
           }}
           tickLabelProps={(d, i) => ({
-            fontSize: 20,
-            fontFamily: "Lobster",
-            dx: "-0.5em"
+            dx: "-0.75em",
+            dy: "0.25em"
           })}
         />
       </D3MarginConvention>

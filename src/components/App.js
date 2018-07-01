@@ -11,6 +11,7 @@ import {
 } from "../utils";
 import Header from "./Header";
 import Footer from "./Footer";
+import Description from "./Description";
 import { ResponsiveBarChart, ResponsiveComparisonBarChart } from "./Chart";
 import { FooterStatic, FooterDynamic, FooterComparison } from "./FooterChart";
 
@@ -18,7 +19,7 @@ const FlexContainer = styled.div`
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  font-family: "InknutAntiqua", cursive;
+  font-family: ${props => props.fontFamily};
 `;
 
 const FlexContent = styled.div`
@@ -221,17 +222,17 @@ class App extends Component {
       z: this.state.zScale
     };
     return (
-      <FlexContainer>
-        <Header text={"Dataviz Challenge"} />
+      <FlexContainer fontFamily={"Kalam"}>
+        <Header text={"Dataviz Challenge Munich"} />
         {this.state.dataset.length < 1 ? (
           <FlexContent>Loading</FlexContent>
         ) : (
           <FlexContent>
             <div>
-              <Header text={"Overview"} backgroundColor={"#d3d3d3"} />
+              <Description />
               <ResponsiveBarChart
                 height={600}
-                margin={{ top: 40, right: 100, bottom: 60, left: 300 }}
+                margin={{ top: 10, right: 45, bottom: 50, left: 240 }}
                 data={this.state.staticData}
                 scales={staticScales}
                 accessors={this.state.accessors}
@@ -252,7 +253,7 @@ class App extends Component {
               />
               <ResponsiveBarChart
                 height={600}
-                margin={{ top: 40, right: 100, bottom: 60, left: 300 }}
+                margin={{ top: 10, right: 45, bottom: 50, left: 240 }}
                 data={this.state.dynamicData}
                 scales={dynamicScales}
                 accessors={this.state.accessors}
@@ -275,7 +276,7 @@ class App extends Component {
               />
               <ResponsiveComparisonBarChart
                 height={600}
-                margin={{ top: 40, right: 100, bottom: 60, left: 300 }}
+                margin={{ top: 10, right: 45, bottom: 30, left: 240 }}
                 data={this.state.comparisonData}
                 selected={this.state.selectedGenre}
                 scales={comparisonScales}

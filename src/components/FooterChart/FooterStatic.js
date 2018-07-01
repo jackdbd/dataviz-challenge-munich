@@ -8,7 +8,7 @@ const FooterStatic = props => {
     <footer style={{ backgroundColor: backgroundColor }}>
       <FooterSummaryStatic
         preTitle={"Figure 1"}
-        title={"Customers who bought at least 1 book of these genres."}
+        title={"Customers who bought at least one book of these genres."}
       />
       <FooterDescriptionStatic
         intro={"The three most popular genres are: "}

@@ -9,7 +9,7 @@ function FooterSummaryDynamic(props) {
         <strong>{`${preTitle}: `}</strong>
       </span>
       <span>{num}</span>
-      <span>{" customers bought at least 1 "}</span>
+      <span>{" customers bought at least one "}</span>
       <span style={{ color: color }}>{genre}</span>
       <span>{" book."}</span>
     </React.Fragment>

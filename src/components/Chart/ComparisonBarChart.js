@@ -103,8 +103,6 @@ function ComparisonBarChart(props) {
           tickStroke="#000000"
           tickLabelProps={(d, i) => ({
             textAnchor: "end",
-            fontSize: 20,
-            fontFamily: "Lobster",
             dx: "-0.25em",
             dy: "0.25em"
           })}
@@ -120,9 +118,8 @@ function ComparisonBarChart(props) {
             return `${d3Format(axisFormatSpecifiers.xLeft)(d)}`;
           }}
           tickLabelProps={(d, i) => ({
-            fontSize: 20,
-            fontFamily: "Lobster",
-            dx: "-0.5em"
+            dx: "-0.75em",
+            dy: "0.25em"
           })}
         />
         <AxisBottom
@@ -134,9 +131,8 @@ function ComparisonBarChart(props) {
             return `${d3Format(axisFormatSpecifiers.xRight)(d)}`;
           }}
           tickLabelProps={(d, i) => ({
-            fontSize: 20,
-            fontFamily: "Lobster",
-            dx: "-0.5em"
+            dx: "-0.75em",
+            dy: "0.25em"
           })}
         />
       </D3MarginConvention>
