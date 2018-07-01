@@ -18,7 +18,6 @@
   "dependencies": {
     "@vx/axis": "^0.0.168",
     "@vx/gradient": "^0.0.165",
-    "@vx/responsive": "^0.0.165",
     "@vx/scale": "^0.0.165",
     "@vx/shape": "^0.0.168",
     "@vx/text": "^0.0.165",
@@ -30,6 +29,7 @@
     "prop-types": "^15.6.2",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
+    "react-resize-aware": "^2.7.1",
     "react-scripts": "1.1.4",
     "react-tooltip": "^3.6.1",
     "styled-components": "^3.3.3"

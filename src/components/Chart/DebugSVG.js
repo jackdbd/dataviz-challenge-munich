@@ -81,10 +81,10 @@ DebugSVG.propTypes = {
   height: PropTypes.number.isRequired,
   viewBox: PropTypes.string,
   margin: PropTypes.shape({
-    top: PropTypes.object.isRequired,
-    right: PropTypes.object.isRequired,
-    bottom: PropTypes.object.isRequired,
-    left: PropTypes.object.isRequired
+    top: PropTypes.number.isRequired,
+    right: PropTypes.number.isRequired,
+    bottom: PropTypes.number.isRequired,
+    left: PropTypes.number.isRequired
   })
 };
 

@@ -1,4 +1,12 @@
-import { BarChart } from "./BarChart";
-import { ComparisonBarChart } from "./ComparisonBarChart";
+import { BarChart, ResponsiveBarChart } from "./BarChart";
+import {
+  ComparisonBarChart,
+  ResponsiveComparisonBarChart
+} from "./ComparisonBarChart";
 
-export { BarChart, ComparisonBarChart };
+export {
+  BarChart,
+  ResponsiveBarChart,
+  ComparisonBarChart,
+  ResponsiveComparisonBarChart
+};

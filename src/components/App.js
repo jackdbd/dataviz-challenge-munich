@@ -3,6 +3,7 @@ import { max, descending } from "d3-array";
 import { scaleLinear, scaleBand, scaleOrdinal } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
 import styled from "styled-components";
+import ResizeAware from "react-resize-aware";
 import {
   loadDataset,
   getStaticData,
@@ -11,7 +12,7 @@ import {
 } from "../utils";
 import Header from "./Header";
 import Footer from "./Footer";
-import { BarChart, ComparisonBarChart } from "./Chart";
+import { ResponsiveBarChart, ResponsiveComparisonBarChart } from "./Chart";
 import { FooterStatic, FooterDynamic, FooterComparison } from "./FooterChart";
 
 const FlexContainer = styled.div`
@@ -229,9 +230,8 @@ class App extends Component {
           <FlexContent>
             <div>
               <Header text={"Overview"} backgroundColor={"#d3d3d3"} />
-              <BarChart
-                parentWidth={800}
-                parentHeight={600}
+              <ResponsiveBarChart
+                height={600}
                 margin={{ top: 40, right: 100, bottom: 60, left: 300 }}
                 data={this.state.staticData}
                 scales={staticScales}
@@ -251,9 +251,8 @@ class App extends Component {
                 text={`${this.state.selectedGenre}`}
                 backgroundColor={this.state.zScale(this.state.selectedGenre)}
               />
-              <BarChart
-                parentWidth={800}
-                parentHeight={600}
+              <ResponsiveBarChart
+                height={600}
                 margin={{ top: 40, right: 100, bottom: 60, left: 300 }}
                 data={this.state.dynamicData}
                 scales={dynamicScales}
@@ -275,9 +274,8 @@ class App extends Component {
                 text={`${this.state.selectedGenre} across all genres`}
                 backgroundColor={this.state.zScale(this.state.selectedGenre)}
               />
-              <ComparisonBarChart
-                parentWidth={1200}
-                parentHeight={600}
+              <ResponsiveComparisonBarChart
+                height={600}
                 margin={{ top: 40, right: 100, bottom: 60, left: 300 }}
                 data={this.state.comparisonData}
                 selected={this.state.selectedGenre}

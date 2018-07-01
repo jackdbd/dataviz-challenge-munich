@@ -1,15 +1,16 @@
-import React from "react";
+import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { format as d3Format } from "d3-format";
 import { Bar } from "@vx/shape";
 import { AxisLeft, AxisBottom } from "@vx/axis";
+import ResizeAware from "react-resize-aware";
 import D3MarginConvention from "./D3MarginConvention";
 import DebugSVG from "./DebugSVG";
 
 function BarChart(props) {
   const {
-    parentWidth,
-    parentHeight,
+    width,
+    height,
     margin,
     data,
     scales,
@@ -18,8 +19,8 @@ function BarChart(props) {
     showDebug,
     handleMouseOver
   } = props;
-  const innerWidth = parentWidth - margin.left - margin.right;
-  const innerHeight = parentHeight - margin.top - margin.bottom;
+  const innerWidth = width - margin.left - margin.right;
+  const innerHeight = height - margin.top - margin.bottom;
   const xScale = scales.x.range([0, innerWidth]);
   const yScale = scales.y
     .range([innerHeight, 0])
@@ -27,9 +28,7 @@ function BarChart(props) {
     .paddingInner(0.2);
   const zScale = scales.z;
 
-  const viewBox = props.viewBox
-    ? props.viewBox
-    : `0 0 ${parentWidth} ${parentHeight}`;
+  const viewBox = props.viewBox ? props.viewBox : `0 0 ${width} ${height}`;
 
   /*
       A chart might not have any event handlers. Also, when it has one, we need to
@@ -43,15 +42,15 @@ function BarChart(props) {
 
   return (
     <svg
-      width={parentWidth}
-      height={parentHeight}
+      width={width}
+      height={height}
       viewBox={viewBox}
       preserveAspectRatio="xMinYMin meet"
     >
       {showDebug && (
         <DebugSVG
-          width={parentWidth}
-          height={parentHeight}
+          width={width}
+          height={height}
           viewBox={viewBox}
           margin={margin}
         />
@@ -128,8 +127,8 @@ BarChart.defaultProps = {
 };
 
 BarChart.propTypes = {
-  parentWidth: PropTypes.number.isRequired,
-  parentHeight: PropTypes.number.isRequired,
+  width: PropTypes.number.isRequired,
+  height: PropTypes.number.isRequired,
   margin: PropTypes.shape({
     top: PropTypes.number.isRequired,
     right: PropTypes.number.isRequired,
@@ -146,4 +145,40 @@ BarChart.propTypes = {
   showDebug: PropTypes.bool
 };
 
-export { BarChart };
+class ResponsiveBarChart extends Component {
+  /*
+    It seems that ResizeAware have `undefined` width and height the first 2
+    times (i.e. before `handleResize` kicks in). Obviously we don't want to pass
+    `undefined` width and height to the BarChart component. I tried to use
+    conditional rendering of ResizeAware without success. I guess it is
+    ResizeAware that should use conditional rendering if its width and height
+    are still undefined.
+  */
+  state = {
+    width: 1000
+  };
+
+  handleResize = props => {
+    const { width, height } = props;
+    // console.log("resize", width, height);
+    this.setState({
+      width: width
+    });
+  };
+
+  render() {
+    const responsiveWidth = this.state.width;
+    const barChartProps = { ...this.props, width: responsiveWidth };
+    return (
+      <ResizeAware
+        style={{ position: "relative" }}
+        onlyEvent
+        onResize={this.handleResize}
+      >
+        <BarChart {...barChartProps} />
+      </ResizeAware>
+    );
+  }
+}
+
+export { BarChart, ResponsiveBarChart };
