@@ -22,7 +22,7 @@ const rowFunction = d => {
 
 export async function loadDataset() {
   // const urlDataset = "../data/book_genres.tsv";
-  const urlDataset = "https://raw.githubusercontent.com/jackdbd/d3-visualizations/master/src/data/book_genres.tsv";
+  const urlDataset = "https://raw.githubusercontent.com/jackdbd/dataviz-challenge-munich/master/data/book_genres.tsv"
   let dataset;
   try {
     dataset = await tsv(urlDataset, rowFunction);
