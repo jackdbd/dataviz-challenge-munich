@@ -81,7 +81,7 @@ function BarChart(props) {
           tickLabelProps={(d, i) => ({
             textAnchor: "end",
             fontSize: 20,
-            fontFamily: "Lobster",
+            fontFamily: "Kalam",
             dx: "-0.25em",
             dy: "0.25em"
           })}

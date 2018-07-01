@@ -3,7 +3,6 @@ import { max, descending } from "d3-array";
 import { scaleLinear, scaleBand, scaleOrdinal } from "d3-scale";
 import { schemeCategory10 } from "d3-scale-chromatic";
 import styled from "styled-components";
-import ResizeAware from "react-resize-aware";
 import {
   loadDataset,
   getStaticData,
@@ -19,7 +18,7 @@ const FlexContainer = styled.div`
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  font-family: "Lobster", cursive;
+  font-family: "InknutAntiqua", cursive;
 `;
 
 const FlexContent = styled.div`
