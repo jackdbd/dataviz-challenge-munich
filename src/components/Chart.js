@@ -5,7 +5,6 @@ import { withParentSize } from "@vx/responsive";
 import { Bar } from "@vx/shape";
 import { AxisLeft, AxisBottom } from "@vx/axis";
 import D3MarginConvention from "./D3MarginConvention";
-import ChartFooter from "./ChartFooter";
 import DebugSVG from "./DebugSVG";
 
 function Chart(props) {
