@@ -1,9 +1,25 @@
 import React from "react";
+import styled from "styled-components";
+
+const FooterGrid = styled.footer`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(321px, 1fr));
+  grid-gap: 10px;
+  background-color: ${props => props.backgroundColor};
+`;
+const Div = styled.div`
+  border-style: dashed;
+`;
+
+const Ul = styled.ul`
+  list-style-type: none;
+`;
 
 const Footer = props => {
+  const { backgroundColor } = props;
   return (
-    <footer style={{ backgroundColor: "#ffaa00" }}>
-      <div>
+    <FooterGrid backgroundColor={backgroundColor}>
+      <Div>
         <h5>About</h5>
         <span>
           Code:{" "}
@@ -15,7 +31,6 @@ const Footer = props => {
             repo on GitHub
           </a>
         </span>
-
         <br />
         <span>
           Me:{" "}
@@ -43,9 +58,11 @@ const Footer = props => {
             Blog
           </a>
         </span>
+      </Div>
 
+      <Div>
         <h5>Built with</h5>
-        <ul>
+        <Ul>
           <li>
             <a
               href="https://reactjs.org/"
@@ -73,9 +90,9 @@ const Footer = props => {
               vx
             </a>
           </li>
-        </ul>
-      </div>
-    </footer>
+        </Ul>
+      </Div>
+    </FooterGrid>
   );
 };
 

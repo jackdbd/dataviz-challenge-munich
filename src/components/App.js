@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { max, descending } from "d3-array";
 import { scaleLinear, scaleBand, scaleOrdinal } from "d3-scale";
-import { schemeCategory10 } from "d3-scale-chromatic";
 import styled from "styled-components";
 import {
   loadDataset,
@@ -41,7 +40,6 @@ const GridContainer = styled.div`
   */
   grid-auto-rows: 1fr;
   grid-gap: 10px;
-  /* fit the FlexContent's height */
   height: 200px;
 `;
 
@@ -172,9 +170,21 @@ class App extends Component {
     const selectedObj = dataset.filter(d => d.genre === selectedGenre)[0];
     // Scales
     // The color scale doesn't change across the charts
+    // http://colorbrewer2.org/?type=qualitative&scheme=Paired&n=10
     const zScale = scaleOrdinal()
       .domain(genres)
-      .range(schemeCategory10);
+      .range([
+        "#a6cee3",
+        "#1f78b4",
+        "#b2df8a",
+        "#33a02c",
+        "#fb9a99",
+        "#e31a1c",
+        "#fdbf6f",
+        "#ff7f00",
+        "#cab2d6",
+        "#6a3d9a"
+      ]);
     const { xScaleStatic, yScaleStatic } = this.updateStaticScalesDomains(
       staticData
     );
@@ -223,7 +233,7 @@ class App extends Component {
     };
     return (
       <FlexContainer fontFamily={"Kalam"}>
-        <Header text={"Dataviz Challenge Munich"} />
+        <Header text={"Dataviz Challenge Munich"} backgroundColor={"#ff7f00"} />
         {this.state.dataset.length < 1 ? (
           <FlexContent>Loading</FlexContent>
         ) : (
@@ -291,7 +301,7 @@ class App extends Component {
             </div>
           </FlexContent>
         )}
-        <Footer />
+        <Footer backgroundColor={"#ff7f00"} />
       </FlexContainer>
     );
   }

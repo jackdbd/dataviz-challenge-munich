@@ -2,10 +2,11 @@ import React from "react";
 import PropTypes from "prop-types";
 
 const Header = props => {
+  const { text, color, backgroundColor } = props;
   return (
-    <nav style={{ backgroundColor: props.backgroundColor }}>
+    <nav style={{ backgroundColor: backgroundColor }}>
       <div>
-        <h3 style={{ color: props.color }}>{props.text}</h3>
+        <h3 style={{ color: color }}>{text}</h3>
       </div>
     </nav>
   );
