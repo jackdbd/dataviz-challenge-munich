@@ -2,6 +2,7 @@
   "name": "dataviz-challenge-munich",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://jackdbd.github.io/dataviz-challenge-munich",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
@@ -11,7 +12,7 @@
     "eject": "react-scripts eject",
     "lint": "prettier --write '{,!(node_modules)/}**/*.{js,jsx}'",
     "ci": "yarn run test && yarn run coverage",
-    "predeploy": "npm run build",
+    "predeploy": "yarn run build",
     "deploy": "gh-pages -d build"
   },
   "dependencies": {
