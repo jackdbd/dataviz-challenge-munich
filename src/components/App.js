@@ -11,7 +11,7 @@ import {
 } from "../utils";
 import Header from "./Header";
 import Footer from "./Footer";
-import { Chart, ComparisonChart } from "./Chart";
+import { BarChart, ComparisonBarChart } from "./Chart";
 import { FooterStatic, FooterDynamic, FooterComparison } from "./FooterChart";
 
 const FlexContainer = styled.div`
@@ -229,7 +229,7 @@ class App extends Component {
           <FlexContent>
             <div>
               <Header text={"Overview"} backgroundColor={"#d3d3d3"} />
-              <Chart
+              <BarChart
                 parentWidth={800}
                 parentHeight={600}
                 margin={{ top: 40, right: 100, bottom: 60, left: 300 }}
@@ -248,10 +248,10 @@ class App extends Component {
             </div>
             <div>
               <Header
-                text={`${this.state.selectedGenre} across all genres`}
+                text={`${this.state.selectedGenre}`}
                 backgroundColor={this.state.zScale(this.state.selectedGenre)}
               />
-              <Chart
+              <BarChart
                 parentWidth={800}
                 parentHeight={600}
                 margin={{ top: 40, right: 100, bottom: 60, left: 300 }}
@@ -271,8 +271,11 @@ class App extends Component {
               />
             </div>
             <div>
-              <Header text={"Comparison Chart"} backgroundColor={"#d3d3d3"} />
-              <ComparisonChart
+              <Header
+                text={`${this.state.selectedGenre} across all genres`}
+                backgroundColor={this.state.zScale(this.state.selectedGenre)}
+              />
+              <ComparisonBarChart
                 parentWidth={1200}
                 parentHeight={600}
                 margin={{ top: 40, right: 100, bottom: 60, left: 300 }}

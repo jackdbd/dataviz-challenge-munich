@@ -8,7 +8,7 @@ const Footer = props => {
         <span>
           Code:{" "}
           <a
-            href="https://github.com/jackdbd/dataviz-challenge"
+            href="https://github.com/jackdbd/dataviz-challenge-munich"
             target="_blank"
             rel="noopener noreferrer"
           >

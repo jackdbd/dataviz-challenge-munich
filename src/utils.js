@@ -22,7 +22,8 @@ const rowFunction = d => {
 
 export async function loadDataset() {
   // const urlDataset = "../data/book_genres.tsv";
-  const urlDataset = "https://raw.githubusercontent.com/jackdbd/dataviz-challenge-munich/master/data/book_genres.tsv"
+  const urlDataset =
+    "https://raw.githubusercontent.com/jackdbd/dataviz-challenge-munich/master/data/book_genres.tsv";
   let dataset;
   try {
     dataset = await tsv(urlDataset, rowFunction);
@@ -49,10 +50,6 @@ export function getDynamicData(dataset, genre) {
   );
   const data = entries.map(d => ({ genre: d[0], customers: d[1] }));
   data.sort((a, b) => ascending(a.customers, b.customers));
-  // const genres = data.map(d => d.genre);
-  // const genre1 = genres[genres.length - 1];
-  // const genre2 = genres[genres.length - 2];
-  // const genre3 = genres[genres.length - 3];
   return data;
 }
 
@@ -86,4 +83,10 @@ export function getComparisonData(dataset, genre) {
   // sort alphabetically (in place)
   genres.sort((a, b) => descending(a, b));
   return data;
+}
+
+export function capitalize(word) {
+  const firstLetter = word.charAt(0).toUpperCase();
+  const otherLetters = word.slice(1);
+  return `${firstLetter}${otherLetters}`;
 }
